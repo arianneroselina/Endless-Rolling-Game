@@ -5,31 +5,38 @@ using UnityEngine;
 public class ObstacleSpawner : MonoBehaviour
 {
     [SerializeField] Obstacle _prefab;
-    [SerializeField] float _frequency = 1f, _offset = 4f;
+    [SerializeField] float _frequency = .3f, _offset = 3f;
     [SerializeField] Transform _left, _mid, _right;
+
     float _counter = 0f;
-    Transform _player;
+    Player _player;
+    Transform _transform;
 
     private void Awake()
     {
-        this._player = FindObjectOfType<Player>().transform;
+        this._player = FindObjectOfType<Player>();
+        this._transform = this._player.transform;
     }
 
     private void Update()
     {
         this._counter += Time.deltaTime;
         if (this._counter >= this._frequency)
-            this.Spawn();
+        {
+            this._counter = 0;
+            if (!this._player.Falling())
+                this.Spawn();
+        }
     }
 
     void Spawn()
     {
-        int num = Random.Range(0, 2);
+        int num = Random.Range(1, 3);
 
         for (int i = 0; i < num; i++)
         {
-            Vector3 spawnPosition = this._player.position;
-            spawnPosition.x += this._counter;
+            Vector3 spawnPosition = this._transform.position;
+            spawnPosition.x += this._offset;
             switch (Random.Range(0, 3))
             {
                 case 0:

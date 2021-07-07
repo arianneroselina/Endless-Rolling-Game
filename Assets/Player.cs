@@ -11,6 +11,8 @@ public class Player : MonoBehaviour
     [SerializeField] float _speed = 10f;
     [SerializeField] Transform _left, _mid, _right, _transform;
 
+    bool _fall = false;
+    bool _hit = false;
     int _currentLane;
     HealthView _healthview;
 
@@ -30,17 +32,27 @@ public class Player : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Obstacle"))
+        if (other.CompareTag("Obstacle") && _hit == false)
         {
+            this._hit = true;
             this._healthPoints--;
             this._healthview.SetLive(this._healthPoints);
             if (this._healthPoints <= 0)
                 SceneManager.LoadScene("Lose");
+            Destroy(other);
+            StartCoroutine(CollisionResolve());
         }
+    }
+
+    IEnumerator CollisionResolve()
+    {
+        yield return new WaitForSeconds(2);
+        this._hit = false;
     }
 
     private void Update()
     {
+        this._fall = false;
         if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
             this.MoveLeft();
         else if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
@@ -49,9 +61,18 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Vector3 target = this._rigidbody.position;
-        target.x += Time.fixedDeltaTime * this._speed;
-        this._rigidbody.MovePosition(target);
+        if (this._rigidbody.position.z <= 2 && this._rigidbody.position.z >= -2)
+        {
+            Vector3 target = this._rigidbody.position;
+            target.x += Time.fixedDeltaTime * this._speed;
+            this._rigidbody.MovePosition(target);
+        }
+        else
+        {
+            Vector3 target = this._rigidbody.position;
+            target.y -= Time.fixedDeltaTime * this._speed;
+            this._rigidbody.MovePosition(target);
+        }
     }
 
     void MoveLeft()
@@ -59,7 +80,11 @@ public class Player : MonoBehaviour
         Vector3 newPos;
         switch (this._currentLane)
         {
-            case 0: 
+            case 0:
+                newPos = this._transform.position;
+                newPos.z = this._left.position.z + 2;
+                this._transform.position = newPos;
+                StartCoroutine(Fall());
                 break;
             case 1:
                 this._currentLane--;
@@ -94,7 +119,23 @@ public class Player : MonoBehaviour
                 this._transform.position = newPos;
                 break;
             case 2:
+                newPos = this._transform.position;
+                newPos.z = this._right.position.z - 2;
+                this._transform.position = newPos;
+                StartCoroutine(Fall());
                 break;
         }
+    }
+
+    IEnumerator Fall()
+    {
+        this._fall = true;
+        yield return new WaitForSeconds(2);
+        SceneManager.LoadScene("Lose");
+    }
+
+    public bool Falling()
+    {
+        return this._fall;
     }
 }
