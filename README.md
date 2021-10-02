@@ -1,9 +1,9 @@
 # My First Game - Ball Rolling Game
 
 <p float="left" align="center">
-  <img src="Menu.jpeg" width="480">
-  <img src="Game.jpeg" width="480">
-  <img src="Lose.jpeg" width="480">
+  <img src="Menu.jpeg" width="450">
+  <img src="Game.jpeg" width="450">
+  <img src="Lose.jpeg" width="450">
 </p>
 
 A small self made game for my first time using Unity. This game is your usual rolling ball game, where obstacles will show up suddenly and you have to dodge it.
