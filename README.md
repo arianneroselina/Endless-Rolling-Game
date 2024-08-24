@@ -1,4 +1,4 @@
-# My First Game - Ball Rolling Game
+# My First Game - Endless Rolling Game
 
 <p float="left" align="center">
   <img src="Menu.jpeg" width="450">
